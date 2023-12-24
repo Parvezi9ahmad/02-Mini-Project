@@ -20,6 +20,8 @@ public class DataLoader implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
+         //before startup application always delete the records and then insert the records
+		repo.deleteAll();
 
 		CitizenPlan p1 = new CitizenPlan("John", "john@in.com", 12341L, 987651L, "Male", "Cash", "Approved",
 				LocalDate.now(), LocalDate.now().plusMonths(6));

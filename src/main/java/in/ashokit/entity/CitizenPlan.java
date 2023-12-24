@@ -19,7 +19,7 @@ public class CitizenPlan {
 	private String gender;
 	private String planName;
 	private String planStatus;
-	private LocalDate planStartate;
+	private LocalDate planStartDate;
 	private LocalDate planEndDate;
 	public Integer getCitizenId() {
 		return citizenId;
@@ -69,11 +69,11 @@ public class CitizenPlan {
 	public void setPlanStatus(String planStatus) {
 		this.planStatus = planStatus;
 	}
-	public LocalDate getPlanStartate() {
-		return planStartate;
+	public LocalDate getPlanStartDate() {
+		return planStartDate;
 	}
-	public void setPlanStartate(LocalDate planStartate) {
-		this.planStartate = planStartate;
+	public void setPlanStartDate(LocalDate planStartDate) {
+		this.planStartDate = planStartDate;
 	}
 	public LocalDate getPlanEndDate() {
 		return planEndDate;
@@ -81,8 +81,11 @@ public class CitizenPlan {
 	public void setPlanEndDate(LocalDate planEndDate) {
 		this.planEndDate = planEndDate;
 	}
+	public CitizenPlan() {
+		super();
+	}
 	public CitizenPlan(String name, String email, Long phno, Long ssn, String gender, String planName,
-			String planStatus, LocalDate planStartate, LocalDate planEndDate) {
+			String planStatus, LocalDate planStartDate, LocalDate planEndDate) {
 		super();
 		this.name = name;
 		this.email = email;
@@ -91,11 +94,8 @@ public class CitizenPlan {
 		this.gender = gender;
 		this.planName = planName;
 		this.planStatus = planStatus;
-		this.planStartate = planStartate;
+		this.planStartDate = planStartDate;
 		this.planEndDate = planEndDate;
-	}
-	public CitizenPlan() {
-		super();
 	}
 	
 	
