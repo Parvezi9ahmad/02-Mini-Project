@@ -9,22 +9,21 @@ import in.ashokit.binding.SearchCriteria;
 import in.ashokit.entity.CitizenPlan;
 import in.ashokit.repo.CitizenPlanRepo;
 import jakarta.servlet.http.HttpServletResponse;
+
 @Service
 public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 	@Autowired
 	private CitizenPlanRepo repo;
-	
+
 	@Override
 	public List<String> getPlanNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return repo.getPlanNames();
 	}
 
 	@Override
 	public List<String> getPlanStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return repo.getPlanStatus();
 	}
 
 	@Override
