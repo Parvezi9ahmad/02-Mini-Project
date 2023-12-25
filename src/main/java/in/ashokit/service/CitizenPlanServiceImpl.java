@@ -28,8 +28,8 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 	@Override
 	public List<CitizenPlan> searchCitizens(SearchCriteria criteria) {
-		// TODO Auto-generated method stub
-		return null;
+		//todo:implemennts filetrs
+		return repo.findAll();
 	}
 
 	@Override
