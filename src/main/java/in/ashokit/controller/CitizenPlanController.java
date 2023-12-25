@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import in.ashokit.binding.SearchCriteria;
 import in.ashokit.entity.CitizenPlan;
 import in.ashokit.service.CitizenPlanService;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class CitizenPlanController {
@@ -42,6 +43,19 @@ public class CitizenPlanController {
 		formInit(model);
 		model.addAttribute("citizens", citizensInfo);
 		return "index";
-
+	}
+	
+	@GetMapping("/excel")
+	public void downloadExcel(HttpServletResponse response) throws Exception {
+		//it means download all the browser
+		response.setContentType("application/octet-stream");
+		
+		String headerKey="Content-Disposition";
+		String headerValue="attachment;filename=data.xls";
+		
+		//add the headers in the response
+		response.addHeader(headerKey, headerValue);
+		
+		service.generateExcel(response);
 	}
 }

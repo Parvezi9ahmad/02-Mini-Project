@@ -1,5 +1,6 @@
 package in.ashokit.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import in.ashokit.binding.SearchCriteria;
@@ -14,7 +15,7 @@ public interface CitizenPlanService {
 
 	public List<CitizenPlan> searchCitizens(SearchCriteria criteria);
 
-	public void generateExcel(HttpServletResponse response);
+	public void generateExcel(HttpServletResponse response)throws Exception;
 
-	public void generatePdf(HttpServletResponse response);
+	public void generatePdf(HttpServletResponse response)throws Exception;
 }
