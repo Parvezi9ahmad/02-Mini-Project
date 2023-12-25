@@ -15,14 +15,39 @@
 		<h1>Welcome to Reports Application</h1>
 	</div>
 
-	<div class="container">
-		<form th:action="@{/info}" th:object="${search}" method="POST">
+	<div class="container" mt-5>
+		<form th:action="@{/filter-data}" th:object="${search}" method="POST">
 			<table>
 				<tr>
 					<td>
-						<select>
-							<option>-Select-</option>
+						<select class="form-control" th:field="*{planName}">
+							<option value=" ">-Plan Name-</option>
+							<option th:each="name: ${planNames}" th:value="${name}" th:text="${name}">
+							</option>
 						</select>
+					</td>
+					<td>
+						<select class="form-control" th:field="*{planStatus}">
+							<option value=" ">-Plan Status-</option>
+							<option th:each="status: ${planStatus}" th:value="${status}" th:text="${status}">
+							</option>
+						</select>
+					</td>
+					<td>
+						<select class="form-control" th:field="*{gender}">
+							<option value=" ">-Gender-</option>
+							<option value="Male">Male</option>
+							<option value="Fe-Male">Fe-Male</option>
+						</select>
+					</td>
+					<td>
+						<input type="date" class="form-control" th:field="*{planStartDate}"/>
+					</td>
+					<td>
+						<input type="date" class="form-control" th:field="*{planEndDate}"/>
+					</td>
+					<td>
+						<input type="submit" value="Search" class="btn btn-primary" />
 					</td>
 				</tr>
 			</table>
