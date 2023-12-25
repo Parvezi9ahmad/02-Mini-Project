@@ -40,6 +40,12 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 		if (StringUtils.isNotBlank(criteria.getGender())) {
 			entity.setGender(criteria.getGender());
 		}
+		if(criteria.getPlanStartDate()!=null) {
+			entity.setPlanStartDate(criteria.getPlanStartDate());
+		}
+		if(criteria.getPlanEndDate()!=null) {
+			entity.setPlanEndDate(criteria.getPlanEndDate());
+		}
 		
 		Example<CitizenPlan> of = Example.of(entity);
 
