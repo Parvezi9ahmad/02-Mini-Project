@@ -1,5 +1,7 @@
 package in.ashokit.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import in.ashokit.binding.SearchCriteria;
 import in.ashokit.entity.CitizenPlan;
 import in.ashokit.repo.CitizenPlanRepo;
+import in.ashokit.utils.EmailUtils;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +36,9 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 	@Autowired
 	private CitizenPlanRepo repo;
+
+	@Autowired
+	private EmailUtils emailUtils;
 
 	@Override
 	public List<String> getPlanNames() {
@@ -98,55 +104,76 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 			rowIndex++;
 		}
+
+		// TO den file to Email Attachment
+		File f = new File("data.xls");
+		FileOutputStream fos = new FileOutputStream(f);
+		workbook.write(fos);
+		emailUtils.sendEmail(f);
+
+		// To download file from browser
 		ServletOutputStream outputStream = response.getOutputStream();
 		workbook.write(outputStream);
 		workbook.close();
 		outputStream.close();
+		fos.close();
 	}
 
 	@Override
 	public void generatePdf(HttpServletResponse response) throws IOException {
 
-		Document pdfDoc = new Document(PageSize.A4);
+		Document pdfDoc1 = new Document(PageSize.A4); // browser
+
 		ServletOutputStream outputStream = response.getOutputStream();
-		PdfWriter.getInstance(pdfDoc, outputStream);
+		PdfWriter.getInstance(pdfDoc1, outputStream);
+		pdfDoc1.open();
 
-		pdfDoc.open();
+		Document pdfDoc2 = new Document(PageSize.A4); // email-attachment
 
-		// this code is for paragraph creation
-		Font fontTitle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
-		fontTitle.setSize(20);
-		Paragraph p = new Paragraph("Citizen Plan Info", fontTitle);
+		File f = new File("data.pdf");
+		FileOutputStream fos = new FileOutputStream(f);
+		PdfWriter.getInstance(pdfDoc2, fos);
+		pdfDoc2.open();
+
+		Font fontTiltle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
+		fontTiltle.setSize(20);
+		Paragraph p = new Paragraph("Citizen Plans Info", fontTiltle);
 		p.setAlignment(Paragraph.ALIGN_CENTER);
-		pdfDoc.add(p);
 
-		PdfPTable table = new PdfPTable(6);
+		pdfDoc1.add(p);
+		pdfDoc2.add(p);
+
+		PdfPTable table = new PdfPTable(6); // 6 cells
 		table.setWidthPercentage(100);
 		table.setWidths(new int[] { 3, 3, 3, 3, 3, 3 });
 		table.setSpacingBefore(5);
 
-		// this code is for creation pdf table header cell with background color
 		PdfPCell cell = new PdfPCell();
-		// Setting the background color and padding of the table cell
 		cell.setBackgroundColor(CMYKColor.BLUE);
 		cell.setPadding(5);
 		Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN);
 		font.setColor(CMYKColor.WHITE);
+
 		cell.setPhrase(new Phrase("Name", font));
 		table.addCell(cell);
+
 		cell.setPhrase(new Phrase("Email", font));
 		table.addCell(cell);
+
 		cell.setPhrase(new Phrase("Gender", font));
 		table.addCell(cell);
+
 		cell.setPhrase(new Phrase("SSN", font));
 		table.addCell(cell);
+
 		cell.setPhrase(new Phrase("Plan Name", font));
 		table.addCell(cell);
+
 		cell.setPhrase(new Phrase("Plan Status", font));
 		table.addCell(cell);
 
-		// adding the records from the database inot pdf
 		List<CitizenPlan> records = repo.findAll();
+
 		for (CitizenPlan record : records) {
 			table.addCell(record.getName());
 			table.addCell(record.getEmail());
@@ -156,11 +183,16 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 			table.addCell(record.getPlanStatus());
 		}
 
-		pdfDoc.add(table);
+		pdfDoc1.add(table);
+		pdfDoc2.add(table);
 
-		pdfDoc.close();
+		pdfDoc1.close();
 		outputStream.close();
 
+		pdfDoc2.close();
+		fos.close();
+
+		emailUtils.sendEmail(f);
 	}
 
 }
