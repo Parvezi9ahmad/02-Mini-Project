@@ -10,6 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.CMYKColor;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
 import in.ashokit.binding.SearchCriteria;
 import in.ashokit.entity.CitizenPlan;
 import in.ashokit.repo.CitizenPlanRepo;
@@ -59,6 +70,7 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 	@Override
 	public void generateExcel(HttpServletResponse response) throws Exception {
+
 		List<CitizenPlan> records = repo.findAll();
 
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -86,7 +98,6 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 
 			rowIndex++;
 		}
-
 		ServletOutputStream outputStream = response.getOutputStream();
 		workbook.write(outputStream);
 		workbook.close();
@@ -94,8 +105,61 @@ public class CitizenPlanServiceImpl implements CitizenPlanService {
 	}
 
 	@Override
-	public void generatePdf(HttpServletResponse response) {
-		// TODO Auto-generated method stub
+	public void generatePdf(HttpServletResponse response) throws IOException {
+
+		Document pdfDoc = new Document(PageSize.A4);
+		ServletOutputStream outputStream = response.getOutputStream();
+		PdfWriter.getInstance(pdfDoc, outputStream);
+
+		pdfDoc.open();
+
+		// this code is for paragraph creation
+		Font fontTitle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
+		fontTitle.setSize(20);
+		Paragraph p = new Paragraph("Citizen Plan Info", fontTitle);
+		p.setAlignment(Paragraph.ALIGN_CENTER);
+		pdfDoc.add(p);
+
+		PdfPTable table = new PdfPTable(6);
+		table.setWidthPercentage(100);
+		table.setWidths(new int[] { 3, 3, 3, 3, 3, 3 });
+		table.setSpacingBefore(5);
+
+		// this code is for creation pdf table header cell with background color
+		PdfPCell cell = new PdfPCell();
+		// Setting the background color and padding of the table cell
+		cell.setBackgroundColor(CMYKColor.BLUE);
+		cell.setPadding(5);
+		Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN);
+		font.setColor(CMYKColor.WHITE);
+		cell.setPhrase(new Phrase("Name", font));
+		table.addCell(cell);
+		cell.setPhrase(new Phrase("Email", font));
+		table.addCell(cell);
+		cell.setPhrase(new Phrase("Gender", font));
+		table.addCell(cell);
+		cell.setPhrase(new Phrase("SSN", font));
+		table.addCell(cell);
+		cell.setPhrase(new Phrase("Plan Name", font));
+		table.addCell(cell);
+		cell.setPhrase(new Phrase("Plan Status", font));
+		table.addCell(cell);
+
+		// adding the records from the database inot pdf
+		List<CitizenPlan> records = repo.findAll();
+		for (CitizenPlan record : records) {
+			table.addCell(record.getName());
+			table.addCell(record.getEmail());
+			table.addCell(record.getGender());
+			table.addCell(String.valueOf(record.getSsn()));
+			table.addCell(record.getPlanName());
+			table.addCell(record.getPlanStatus());
+		}
+
+		pdfDoc.add(table);
+
+		pdfDoc.close();
+		outputStream.close();
 
 	}
 

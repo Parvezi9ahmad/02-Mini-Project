@@ -44,18 +44,31 @@ public class CitizenPlanController {
 		model.addAttribute("citizens", citizensInfo);
 		return "index";
 	}
-	
+
 	@GetMapping("/excel")
 	public void downloadExcel(HttpServletResponse response) throws Exception {
-		//it means download all the browser
+		// it means download all the browser
 		response.setContentType("application/octet-stream");
-		
-		String headerKey="Content-Disposition";
-		String headerValue="attachment;filename=data.xls";
-		
-		//add the headers in the response
+
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment;filename=data.xls";
+
+		// add the headers in the response
 		response.addHeader(headerKey, headerValue);
-		
+
 		service.generateExcel(response);
+	}
+
+	@GetMapping("/pdf")
+	public void downloadPdf(HttpServletResponse response) throws Exception {
+		// it means download all the browser
+		response.setContentType("application/pdf");
+
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment;filename=data.pdf";
+
+		// add the headers in the response
+		response.addHeader(headerKey, headerValue);
+		service.generatePdf(response);
 	}
 }
